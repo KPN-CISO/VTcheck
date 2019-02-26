@@ -20,11 +20,11 @@ VTcheck will automatically parse the entirety of any text file (unstructured or 
 
 # Usage  
   
-1) ./vtcheck.py -f <file-with-hashes> -k <VT API key>
+1) ./vtcheck.py -f *file_with_hashes* -k *VT_API_key*
 
 or
 
-2) ./vtcheck.py -k <VT API key> <hash 1> <hash 2> ... <hash N>
+2) ./vtcheck.py -k *VT_API_key* *hash 1* *hash 2* ... *hash N*
 
 Usage notes:
 
