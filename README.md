@@ -20,13 +20,13 @@ VTcheck will automatically parse the entirety of any text file (unstructured or 
 
 # Usage  
   
-1) ./vtcheck.py -f *file_with_hashes* -k *VT_API_key*
+```1) ./vtcheck.py -f <file containing hashes> -k <VT_API_key>```
 
 or
 
-2) ./vtcheck.py -k *VT_API_key* *hash 1* *hash 2* ... *hash N*
+```2) ./vtcheck.py -k <VT_API_key> <hash1> <hash2> ... <hashN>```
 
 Usage notes:
 
 1) Unless you have a paid VirusTotal subscription, do not decrease the time interval to lower than 15 seconds!
-1) You can combine both a file containing hashes with hashes on the command line.
+1) You can combine a file containing hashes, and at the same time specify additional hashes on the command line.
