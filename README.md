@@ -30,3 +30,7 @@ Usage notes:
 
 1) Unless you have a paid VirusTotal subscription, do not decrease the time interval to lower than 15 seconds!
 1) You can specify a file containing hashes, and at the same time specify additional hashes on the command line.
+
+# TODO
+
+1) Add features to parse the VirusTotal JSON response and give more information about the maliciousness of a file.
