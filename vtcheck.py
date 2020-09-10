@@ -49,7 +49,9 @@ def checkHash(hash, apikey):
                 if options.verbose:
                     result += "\nVirusTotal JSON output:\n"
                     result += str(json_response)
-            return result, response
+                return result, positives
+            else:
+                return "Verdict: unknown hash", 0
         except ValueError:
             print("An error occurred: ")
             print(response)
@@ -134,15 +136,16 @@ if __name__ == "__main__":
                     print("\"" + hash + "\",\"" + hashtype + "\",\"" +
                           result + "\"")
                 else:
-                    print("[" + str(count) + "/" + \
-                          str(len(hashlist)) + "] " + \
-                          "Result for " + hashtype + \
-                          " hash: " + hash + \
+                    print("[" + str(count) + "/" +
+                          str(len(hashlist)) + "] " +
+                          "Result for " + hashtype +
+                          " hash: " + hash +
                           " -> " + result)
                 count += 1
-            except NameError:
+            except Exception as e:
                 print("E) An error occurred checking " + hashtype +
                       " hash: " + hash)
+                print("E) " + e.msg)
             time.sleep(float(options.interval))
         if not options.csv:
             print("I) Checks successfully completed for " + str(count) +
