@@ -15,7 +15,8 @@ HTTPHEADERS = {'Accept-Encoding': 'gzip, deflate',
                'User-Agent': 'gzip, vtcheck'}
 EMPTYMD5 = "d41d8cd98f00b204e9800998ecf8427e"
 EMPTYSHA1 = "da39a3ee5e6b4b0d3255bfef95601890afd80709"
-EMPTYSHA256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+EMPTYSHA256 = "e3b0c44298fc1c149afbf4c8996fb924"\
+              "27ae41e4649b934ca495991b7852b855"
 
 
 def checkHash(hash, apikey):
@@ -29,12 +30,25 @@ def checkHash(hash, apikey):
     if response:
         try:
             json_response = response.json()
-            if 'response_code' in json_response.keys():
-                response_code = int(json_response['response_code'])
-                if response_code != 0:
-                    result = "FOUND: potentially malicious"
+            if 'positives' in json_response.keys():
+                positives = int(json_response['positives'])
+                total = int(json_response['total'])
+                result = "Verdict: "
+                if positives > 30:
+                    result += "highly likely"
+                elif positives > 20:
+                    result += "very likely"
+                elif positives > 10:
+                    result += "likely"
+                elif positives > 0:
+                    result += "potentially"
                 else:
-                    result = "currently not recognized as malicious"
+                    result += "not"
+                result += " malicious"
+                result += " [" + str(positives) + "/" + str(total) + "]"
+                if options.verbose:
+                    result += "\nVirusTotal JSON output:\n"
+                    result += str(json_response)
             return result, response
         except ValueError:
             print("An error occurred: ")
@@ -42,8 +56,8 @@ def checkHash(hash, apikey):
 
 
 if __name__ == "__main__":
-    cli = optparse.OptionParser(usage="usage: %prog -f <IPFILE> -t <interval>"
-                                      " <hashes>")
+    cli = optparse.OptionParser(usage="usage: %prog -f <hashfile> "
+                                      "-t <interval> <hashes>")
     cli.add_option('-f', '--file', dest='filename', action='store',
                    help='[required] File containing hashes to check',
                    metavar='IPFILE', default=None)
@@ -55,6 +69,8 @@ if __name__ == "__main__":
     cli.add_option('-c', '--csv', dest='csv', action='store_true',
                    default=False, help='[optional] Do not print progress, '
                    'errors (quiet operation), CSV output format')
+    cli.add_option('-v', '--verbose', dest='verbose', action='store_true',
+                   default=False, help='[optional] Print verbose errors')
     (options, hashes) = cli.parse_args()
     if (options.filename or hashes) and options.apikey:
         total = 0
@@ -62,7 +78,8 @@ if __name__ == "__main__":
         hashlist = set()
         if options.filename:
             if not options.csv:
-                print("I) Parsing " + options.filename + " for md5/sha1/sha256 "
+                print("I) Parsing " + options.filename +
+                      " for md5/sha1/sha256 " +
                       "hashes...")
             try:
                 hashfile = open(options.filename, 'r')
@@ -109,15 +126,18 @@ if __name__ == "__main__":
                   " unique hashes out of " + str(total) +
                   " in total. Now checking against "
                   "VirusTotal (this may take a while) ...")
-        count = 0
+        count = 1
         for hash, hashtype in hashlist:
             try:
                 result, report = checkHash(hash, options.apikey)
                 if options.csv:
-                    print("\"" + hash + "\",\"" + hashtype + "\",\"" + result + "\"")
+                    print("\"" + hash + "\",\"" + hashtype + "\",\"" +
+                          result + "\"")
                 else:
-                    print("Result for " + hashtype +
-                          " hash: " + hash +
+                    print("[" + str(count) + "/" + \
+                          str(len(hashlist)) + "] " + \
+                          "Result for " + hashtype + \
+                          " hash: " + hash + \
                           " -> " + result)
                 count += 1
             except NameError:
