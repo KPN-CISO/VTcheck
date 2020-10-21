@@ -148,7 +148,7 @@ if __name__ == "__main__":
                 print("E) " + e.msg)
             time.sleep(float(options.interval))
         if not options.csv:
-            print("I) Checks successfully completed for " + str(count) +
+            print("I) Checks successfully completed for " + str(len(hashlist)) +
                   " out of " + str(len(hashlist)) + " hashes.")
     else:
         if not options.filename and not hashes:
